@@ -9,23 +9,29 @@ Welcome to the **Food Price Detection** project! This project aims to predict th
 - **Dataset**: Includes a dataset for training and testing the model.
 
 ## 📂 Project Structure
-food-price-detection/
 ├── app.py # Flask application for local predictions
+
 ├── templates/ # HTML templates for the local web interface
 │ └── index.html # Main page for input and prediction
-├── static/ # Static files (CSS, JS, images)
-├── dataset/ # Dataset used for training the model
-│ └── food_data.csv # Sample dataset
-├── models/ # Trained models
+
+├── Dataset/ # Dataset used for training the model
+│ └── food_prices_ind.csv # Sample dataset
+│ └── food_prices_ind_cleaned.csv # cleaned dataset
+
+├── Models/ # Contains pickle file of the model
+│ └── xgb.pkl # pickle file of the model
+
+├── notebook/ # Trained models, including jyputer notebook file
+
 ├── requirements.txt # Python dependencies
+
+├── README.md # This file
+
 ├── LICENSE # License file
-└── README.md # This file
 
-## 🛠️ Installation
 
-1. **Clone the repository**:
-git clone https://github.com/your-username/food-price-detection.git
-cd food-price-detection
+
+## HOW TO USE THIS
 
 Install dependencies:
 pip install -r requirements.txt
@@ -35,6 +41,9 @@ python app.py
 
 Access the local application:
 Open your browser and go to http://127.0.0.1:5000/process
+
+
+
 
 
 🧑‍💻 Usage
