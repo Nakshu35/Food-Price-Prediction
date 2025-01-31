@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriPulse - Food Price Prediction</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e8f5e9;
+            text-align: center;
+            color: #333;
+            background-image: url("OIP\ \(1\).jpg");
+            background-size: cover;
+            background-position: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .form-group {
+            margin: 10px 0;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        select,
+        input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #4CAF50;
+            border-radius: 5px;
+            background-color: #f1f8e9;
+            transition: border-color 0.3s ease;
+        }
+        
+        select:hover,
+        input[type="date"]:hover {
+            border-color: #2e7d32;
+        }
+        
+        button {
+            background-color: #388E3C;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+        
+        button:hover {
+            background-color: #2e7d32;
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .unique-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .unique-container:hover {
+            transform: scale(1.02);
+        }
+        
+        h1 {
+            margin-bottom: 15px;
+            color: #2e7d32;
+        }
+        
+        #unique-result {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        AgriPulse - "PREDICT.PLAN.PROSPER"
+    </header>
+    <div class="container">
+        <h2>Predict Food & Cereal Prices</h2>
+        <p>Enter the details below to get real-time price predictions.</p>
+
+        <div class="form-group">
+            <label for="state">Select State:</label>
+            <select id="state" onchange="updateDistricts(); updateMarkets();">
+                <option value="">--Select State--</option>
+                <option value="andaman_and_nicobar">Andaman and Nicobar</option>
+                <option value="andhra_pradesh">Andhra Pradesh</option>
+                <option value="assam">Assam</option>
+                <option value="bihar">Bihar</option>
+                <option value="chhattisgarh">Chhattisgarh</option>
+                <option value="delhi">Delhi</option>
+                <option value="goa">Goa</option>
+                <option value="gujarat">Gujarat</option>
+                <option value="haryana">Haryana</option>
+                <option value="himachal_pradesh">Himachal Pradesh</option>
+                <option value="jharkhand">Jharkhand</option>
+                <option value="karnataka">Karnataka</option>
+                <option value="kerala">Kerala</option>
+                <option value="madhya_pradesh">Madhya Pradesh</option>
+                <option value="maharashtra">Maharashtra</option>
+                <option value="manipur">Manipur</option>
+                <option value="meghalaya">Meghalaya</option>
+                <option value="mizoram">Mizoram</option>
+                <option value="nagaland">Nagaland</option>
+                <option value="odisha">Odisha</option>
+                <option value="puducherry">Puducherry</option>
+                <option value="punjab">Punjab</option>
+                <option value="rajasthan">Rajasthan</option>
+                <option value="sikkim">Sikkim</option>
+                <option value="tamil_nadu">Tamil Nadu</option>
+                <option value="telangana">Telangana</option>
+                <option value="tripura">Tripura</option>
+                <option value="uttar_pradesh">Uttar Pradesh</option>
+                <option value="uttarakhand">Uttarakhand</option>
+                <option value="west_bengal">West Bengal</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="district">Select District:</label>
+            <select id="district">
+                <option value="">--Select District--</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="market">Select Market:</label>
+            <select id="market">
+                <option value="">--Select Market--</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Select Category:</label>
+            <select id="category" onchange="updateCommodities()">
+                <option value="">--Select Category--</option>
+                <option value="oil_and_fats">Oil and Fats</option>
+                <option value="cereals_and_tubers">Cereals and Tubers</option>
+                <option value="miscellaneous_food">Miscellaneous Food</option>
+                <option value="pulses_and_nuts">Pulses and Nuts</option>
+                <option value="vegetables_and_fruits">Vegetables and Fruits</option>
+                <option value="milk_and_dairy">Milk and Dairy</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="commodity">Select Commodity:</label>
+            <select id="commodity">
+                <option value="">--Select Commodity--</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="unit">Select Unit:</label>
+            <select id="unit">
+                <option value="">--Select Unit--</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="pricetype">Select Pricetype:</label>
+            <select id="pricetype">
+                <option value="">--Select Pricetype--</option>
+                <option value="Retail">Retail</option>
+                <option value="Wholesale">Wholesale</option>
+            </select>
+        </div>
+
+        <div class="unique-container">
+            <h1>Date Input Form</h1>
+            <form id="unique-dateForm">
+                <label for="unique-dateInput">Enter a date:</label>
+                <input type="date" id="unique-dateInput" required>
+                <button type="submit">Submit</button>
+            </form>
+            <div id="unique-result"></div>
+        </div>
+
+        <button onclick="predictPrice(); predictPricet();">Get Prediction</button>
+
+
+        <br><br>
+
+        <h2>--------------Result :--------------</h2>
+        <h3 id="result"></h3>
+    </div>
+
+    <footer>
+        &copy; 2025 AgriPulse | All Rights Reserved
+    </footer>
+
+    <script>
+        const statevalues = {
+            "delhi": 0,
+            "gujarat": 1,
+            "himachal_pradesh": 2,
+            "karnataka": 3,
+            "madhya_pradesh": 4,
+            "maharashtra": 5,
+            "orissa": 6,
+            "telangana": 7,
+            "tripura": 8,
+            "west_bengal": 9,
+            "meghalaya": 10,
+            "rajasthan": 11,
+            "tamil_nadu": 12,
+            "assam": 13,
+            "kerala": 14,
+            "uttar_pradesh": 15,
+            "mizoram": 16,
+            "bihar": 17,
+            "chandigarh": 18,
+            "jharkhand": 19,
+            "nagaland": 20,
+            "punjab": 21,
+            "uttarakhand": 22,
+            "andhra_pradesh": 23,
+            "haryana": 24,
+            "andaman_and_nicobar": 25,
+            "puducherry": 26,
+            "goa": 27,
+            "chhattisgarh": 28,
+            "manipur": 29,
+            "sikkim": 30
+        };
+
+        const categoryvalues = {
+            "oil_and_fats": 0,
+            "cereals_and_tubers": 1,
+            "miscellaneous_food": 2,
+            "pulses_and_nuts": 3,
+            "vegetables_and_fruits": 4,
+            "milk_and_dairy": 5
+        }
+        const commodityvalues = {
+            "rice": 0,
+            "sugar": 1,
+            "wheat": 2,
+            "oil_mustard": 3,
+            "potatoes": 4,
+            "onions": 5,
+            "wheat_flour": 6,
+            "salt_iodised": 7,
+            "tomatoes": 8,
+            "milk_pasteurized": 9,
+            "lentils_masur": 10,
+            "lentils": 11,
+            "tea_black": 12,
+            "oil_sunflower": 13,
+            "lentils_moong": 14,
+            "lentils_urad": 15,
+            "sugar_jaggery_gur": 16,
+            "oil_groundnut": 17,
+            "ghee_vanaspati": 18,
+            "oil_palm": 19,
+            "oil_soybean": 20,
+            "chickpeas": 21,
+            "milk": 22
+        };
+        const unitvalues = {
+            "KG": 0,
+            "L": 1,
+            "100KG": 2
+        };
+        const pricevalues = {
+            "Retail": 0,
+            "Wholesale": 1
+        };
+        const districtsData = {
+            "andaman_and_nicobar": ['Andaman Islands: 47'],
+            "andhra_pradesh": ['Chittoor: 56', 'Krishna: 25', 'Kurnool: 57', 'Vishakhapatnam: 58'],
+            "assam": ['Kamrup: 13'],
+            "bihar": ['Araria: 129', 'Banka: 29', 'Darbhanga: 59', 'Gaya: 60', 'Katihar: 130', 'Khagaria: 131',
+                'Madhubani: 132', 'Munger: 133', 'Muzaffarpur: 61', 'Nawada: 134', 'Patna: 17', 'Purnia: 62',
+                'Purba Champaran: 135', 'Rohtas: 136', 'Saharsa: 137', 'Samastipur: 138', 'Saran: 139'
+            ],
+            "chandigarh": ['Chandigarh: 18'],
+            "chhattisgarh": ['Bastar: 63', 'Bilaspur: 64', 'Dantewada: 153', 'Raigarh: 152', 'Surguja: 66'],
+            "delhi": ['Delhi: 0'],
+            "goa": ['North goa: 49'],
+            "gujarat": ['Ahmedabad: 1', 'Kachchh: 67', 'Narmada: 154', 'Rajkot: 26', 'Surat: 68', 'Vadodara: 155', 'Valsad: 150'],
+            "haryana": ['Gurgaon: 50', 'Hisar: 30', 'Karnal: 31', 'Panchkula: 51'],
+            "himachal_pradesh": ['Chamba: 151', 'Kangra: 69', 'Mandi: 32', 'Shimla: 2', 'Solan: 70', 'Una: 111'],
+            "jharkhand": ['Bokaro: 118', 'Dhanbad: 156', 'Gumla: 119', 'Lohardaga: 120', 'Ranchi: 19', 'Sahibganj: 121', 'Simdega: 122'],
+            "karnataka": ['Bangalore Urban: 3', 'Bid: 34', 'Bijapur: 124', 'Dakshin Kannad: 71', 'Davanagere: 125', 'Dharwad: 33',
+                'Gulbarga: 126', 'Mysore: 72', 'Shimoga: 127', 'Tumkur: 128'
+            ],
+            "kerala": ['Ernakulam: 45', 'Kozhikode: 52', 'Palakkad: 73', 'Thrissur: 74', 'Thiruvananthapuram: 14', 'Wayanad: 75'],
+            "madhya_pradesh": ['Bhopal: 4', 'Gwalior: 53', 'Hoshangabad: 112', 'Indore: 41', 'Jabalpur: 54', 'Jhabua: 113',
+                'Rewa: 76', 'Sagar: 77', 'Shahdol: 114', 'Ujjain: 115'
+            ],
+            "maharashtra": ['Amravati: 20', 'Mumbai city: 5', 'Nashik: 78', 'Pune: 79'],
+            "manipur": ['Imphal East: 80', 'Imphal West: 80'],
+            "meghalaya": ['East Khasi Hills: 10', 'Jaintia Hills: 81', 'West Khasi Hills: 40', 'West Garo Hills: 82'],
+            "mizoram": ['Aizawl: 16'],
+            "nagaland": ['Dimapur: 42', 'Kohima: 21'],
+            "odisha": ['Baleshwar: 83', 'Cuttack: 35', 'Ganjam: 84', 'Khordha: 6', 'Koraput: 85', 'Mayurbhanj: 117',
+                'Sambalpur: 36', 'Sundargarh: 55'
+            ],
+            "punjab": ['Amritsar: 22', 'Bathinda: 43', 'Ludhiana: 23'],
+            "rajasthan": ['Ajmer: 142', 'Bharatpur: 140', 'Bikaner: 11', 'Jodhpur: 44', 'Kota: 46', 'Udaipur: 86'],
+            "sikkim": ['East Sikkim: 87'],
+            "tamil_nadu": ['Chennai: 12', 'Coimbatore: 88', 'Cuddalore: 89', 'Dharmapuri: 90', 'Dindigul: 27', 'Ramanathapuram: 91',
+                'Tiruchchirappalli: 37', 'Tirunelveli: 92', 'Vellore: 93'
+            ],
+            "telangana": ['Adilabad: 94', 'Hyderabad: 7', 'Karimnagar: 95', 'Mahbubnagar: 96', 'Nalgonda: 97', 'Warangal: 98'],
+            "tripura": ['West Tripura: 8'],
+            "uttar_pradesh": ['Agra: 38', 'Aligarh: 143', 'Bareilly: 144', 'Faizabad: 146', 'Gorakhpur: 99', 'Jhansi: 100',
+                'Kanpur: 28', 'Kaushambi: 101', 'Lucknow: 15', 'Meerut: 102', 'Mirzapur: 147', 'Moradabad: 145',
+                'Saharanpur: 148', 'Varanasi: 39'
+            ],
+            "uttarakhand": ['Dehra Dun: 24', 'Haridwar: 103', 'Naini Tal: 104', 'Udham Singh Nagar: 105'],
+            "west_bengal": ['Birbhum: 106', 'Darjiling: 40', 'Kolkata: 9', 'Maldah: 107', 'Puruliya: 108',
+                'Uttar Dinajpur: 109', 'West Midnapore: 110'
+            ]
+        };
+
+        const marketsByState = {
+            "andaman_and_nicobar": ['Port Blair: 47', 'Mayabunder: 57'],
+            "andhra_pradesh": ['Vijaywada: 25', 'Kurnool: 59', 'Tirupathi: 58', 'Visakhapatnam: 60'],
+            "assam": ['Guwahati: 13'],
+            "bihar": [
+                'Araria: 133', 'Bhagalpur: 29', 'Darbhanga: 61', 'Bihar_Gaya: 62', 'Katihar: 134', 'Khagaria: 135',
+                'Madhubani: 136', 'Munger: 137', 'Muzzafarpur: 63', 'Nawada: 138', 'Patna: 17', 'Purnia: 64',
+                'Motihari: 139', 'Rohtas (sasaram): 140', 'Saharsa: 141', 'Samastipur: 142', 'Saran: 143'
+            ],
+            "chandigarh": ['Chandigarh: 18'],
+            "chhattisgarh": ['Raipur: 20', 'Jagdalpur: 65', 'Bilaspur: 66', 'Durg: 67', 'Ambikapur: 68', 'Dantewada: 159'],
+            "delhi": ['Delhi: 0'],
+            "goa": ['Panaji: 49'],
+            "gujarat": ['Ahmedabad: 1', 'Rajkot: 26', 'Surat: 70', 'Vapi: 156', 'Waghai: 155', 'Bodeli: 161', 'Bhuj: 69'],
+            "haryana": ['Gurgaon: 50', 'Panchkula: 51', 'Hisar: 30', 'Karnal: 31'],
+            "himachal_pradesh": ['Shimla: 2', 'Mandi: 32', 'Dharamshala: 71', 'Solan: 72', 'Una: 113', 'Chamba: 157', 'Bilaspur-hp: 144'],
+            "jharkhand": ['Ranchi: 19', 'Bokaro: 120', 'Dhanbad: 162', 'Jamshedpur: 163', 'Gumla: 121', 'Lohardaga: 122', 'Sahibganj: 123', 'Simdega: 124'],
+            "karnataka": ['Bengaluru: 3', 'Bengaluru (east range): 125', 'Belagavi: 126', 'Vijayapur: 127', 'Dharwad: 33', 'Kalaburagi: 129', 'Dhavanagere: 128', 'Shivamogga: 130', 'Bellary: 131', 'Tumakuru: 132', 'Mangalore: 73', 'Mysore: 74'],
+            "kerala": ['Tiruvanantapuram: 14', 'Ernakulam: 45', 'Kozhikode: 52', 'Palakkad: 75', 'Thrissur: 76', 'Wayanad: 77'],
+            "madhya_pradesh": ['Bhopal: 4', 'Indore: 41', 'Gwalior: 54', 'Jabalpur: 55', 'Sagar: 79', 'Rewa: 78', 'Hoshangabad: 114', 'Jhabua: 115', 'Shahdol: 116', 'Ujjain: 117'],
+            "maharashtra": ['Mumbai: 5', 'Nashik: 80', 'Maharashtra_Pune: 81', 'Mangaon-raigad: 158'],
+            "manipur": ['Imphal: 82'],
+            "meghalaya": ['Shillong: 10', 'Jowai: 83', 'Tura: 84'],
+            "mizoram": ['Aizawl: 16'],
+            "nagaland": ['Kohima: 21', 'Dimapur: 42'],
+            "odisha": ['Bhubaneshwar: 6', 'Cuttack: 35', 'Sambalpur: 36', 'Rourkela: 56', 'Balasore: 85', 'Berhampur: 86', 'Jeypore: 87'],
+            "puducherry": ['Puducherry: 48'],
+            "punjab": ['Amritsar: 22', 'Ludhiana: 23', 'Bathinda: 43'],
+            "rajasthan": ['Jaipur: 11', 'Jodhpur: 44', 'Kota: 46', 'Bharatpur: 145', 'Bikaner: 146', 'Udaipur: 88', 'Ajmer: 148'],
+            "sikkim": ['Gangtok: 89'],
+            "tamil_nadu": ['Chennai: 12', 'Dindigul: 27', 'Thiruchirapalli: 37', 'Coimbatore: 90', 'Cuddalore: 91', 'Dharmapuri: 92', 'Ramanathapuram: 93', 'Tirunelveli: 94', 'Vellore: 95'],
+            "telangana": ['Hyderabad: 7', 'Adilabad: 96', 'Karimnagar: 97', 'Jadcherla: 98', 'Suryapet: 99', 'Warangal: 100'],
+            "tripura": ['Agartala: 8'],
+            "uttar_pradesh": [
+                'Lucknow: 15', 'Kanpur: 28', 'Agra: 38', 'Varanasi: 39', 'Gorakhpur: 101', 'Jhansi: 102', 'Allahabad: 103',
+                'Meerut: 104', 'Saharanpur: 154', 'Aligarh: 149', 'Bareilly: 150', 'Moradabad: 151', 'Ayodhya: 152',
+                'Mirzapur (vindhyanchal): 153'
+            ],
+            "uttarakhand": ['Dehradun: 24', 'Haridwar: 105', 'Haldwani: 106', 'Rudrapur: 107'],
+            "west_bengal": ['Kolkata: 9', 'Siliguri: 40', 'Malda: 109', 'Purulia: 110', 'Raiganj: 111', 'Kharagpur: 112', 'Rampurhat: 108']
+        };
+
+        function updateDistricts() {
+            let state = document.getElementById("state").value;
+            let districtSelect = document.getElementById("district");
+            districtSelect.innerHTML = "<option value=''>--Select District--</option>";
+            if (districtsData[state]) {
+                districtsData[state].forEach(district => {
+                    let option = document.createElement("option");
+                    option.value = district.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+            }
+        }
+
+        function updateMarkets() {
+            let state = document.getElementById("state").value;
+            let marketSelect = document.getElementById("market");
+            marketSelect.innerHTML = "<option value=''>--Select Market--</option>";
+
+            if (marketsByState[state]) {
+                marketsByState[state].forEach(market => {
+                    let option = document.createElement("option");
+                    option.value = market.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = market;
+                    marketSelect.appendChild(option);
+                });
+            }
+        }
+
+        const commoditiesData = {
+            "oil_and_fats": ["Ghee_vanaspati", "Oil_groundnut", "Oil_mustard", "Oil_palm", "Oil_soybean", "Oil_sunflower"],
+            "cereals_and_tubers": ["Rice", "Wheat", "Wheat flour", "Potatoes"],
+            "miscellaneous_food": ["Salt_iodised", "Sugar", "Sugar_jaggery_gur", "Tea_black"],
+            "pulses_and_nuts": ["Chickpeas", "Lentils", "Lentils_masur", "Lentils_moong", "Lentils_urad"],
+            "vegetables_and_fruits": ["Onions", "Tomatoes"],
+            "milk_and_dairy": ["Milk", "Milk_pasteurized"]
+        };
+
+        function updateCommodities() {
+            let category = document.getElementById("category").value;
+            let commoditySelect = document.getElementById("commodity");
+            commoditySelect.innerHTML = "<option value=''>--Select Commodity--</option>";
+            if (commoditiesData[category]) {
+                commoditiesData[category].forEach(commodity => {
+                    let option = document.createElement("option");
+                    option.value = commodity.toLowerCase().replace(/\s+/g, '_');
+                    option.textContent = commodity;
+                    commoditySelect.appendChild(option);
+                });
+            }
+            updateUnitOptions(category);
+        }
+
+        function updateUnitOptions(category) {
+            let unitSelect = document.getElementById("unit");
+            unitSelect.innerHTML = "<option value=''>--Select Unit--</option>";  // Fix: Ensure dropdown has values
+
+            if (category === "milk_and_dairy") {
+                let option = document.createElement("option");
+                option.value = "L";  // Fix value
+                option.textContent = "L";
+                unitSelect.appendChild(option);
+            } else {
+                ["KG", "100KG"].forEach(unit => {
+                    let option = document.createElement("option");
+                    option.value = unit;  // Fix value assignment
+                    option.textContent = unit;
+                    unitSelect.appendChild(option);
+                });
+            } 
+        }
+        let dateInput, date, day, month, year, statet, district, markett, commodityt, categoryt, unitt, pricetypet;
+
+        document.getElementById('unique-dateForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            dateInput = document.getElementById('unique-dateInput').value;
+            date = new Date(dateInput);
+            day = date.getDate();
+            month = date.getMonth() + 1; // Months are zero-based
+            year = date.getFullYear();
+        });
+
+        function predictPricet() {
+            let formData = new FormData();
+            formData.append("statet", statet);
+            formData.append("districtt", districtt);
+            formData.append("markett", markett);
+            formData.append("categoryt", categoryt);
+            formData.append("commodityt", commodityt);
+            formData.append("unitt",unitt);
+            formData.append("pricetypet", pricetypet);
+            formData.append("year", year);
+            formData.append("month", month);
+            formData.append("day", day);
+
+            fetch("/process", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("result").innerText = "Predicted Price:  ₹" + data;
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function predictPrice() {
+            let state = document.getElementById("state").value;
+            let district = document.getElementById("district").value;
+            let market = document.getElementById("market").value;
+            let category = document.getElementById("category").value;
+            let commodity = document.getElementById("commodity").value;
+            let unit = document.getElementById("unit").value;
+            let pricetype = document.getElementById("pricetype").value;
+            statet = statevalues[state];
+
+            districtt = parseInt(district.split("_")[1], 10);
+            let text = district.split("_")[0];
+
+            markett = parseInt(market.split("_")[1], 10);
+
+            markett = isNaN(markett) ? 0 : markett;
+            districtt = isNaN(districtt) ? 0 : districtt;
+
+            textt = market.split("_")[0];
+            categoryt = categoryvalues[category];
+            commodityt = commodityvalues[commodity];
+            unitt = unitvalues[unit];
+            pricetypet = pricevalues[pricetype];
+
+            if (state && district && category && commodity && unit) {
+                
+            } else {
+                alert("Please fill all fields!");
+            }
+        }
+    </script>
+</body>
+
+</html>
